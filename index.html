@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sneaker Store — Catálogo</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>👟 Sneaker Store</h1>
+    <p>Encuentra tu par y pide por WhatsApp</p>
+  </header>
+
+  <section class="filtros">
+    <select id="filtroMarca">
+      <option value="">Todas las marcas</option>
+    </select>
+    <select id="filtroTalla">
+      <option value="">Todas las tallas</option>
+    </select>
+    <label class="check">
+      <input type="checkbox" id="soloDisponibles" checked />
+      Solo disponibles
+    </label>
+  </section>
+
+  <main id="catalogo" class="grid">
+    <p style="padding:20px">Cargando catálogo...</p>
+  </main>
+
+  <footer>
+    <p>© 2025 Sneaker Store — Hecho con ❤️</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
