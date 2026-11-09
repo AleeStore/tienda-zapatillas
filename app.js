@@ -4,6 +4,7 @@ const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTZlB-la3t1Kc1H
 
 let zapatillas = [];
 
+// --- Parsear CSV ---
 function parseCSV(texto) {
   const filas = [];
   let fila = [], campo = "", enComillas = false;
@@ -29,6 +30,7 @@ function parseCSV(texto) {
   });
 }
 
+// --- Cargar datos ---
 async function cargarDatos() {
   const cont = document.getElementById("catalogo");
   try {
@@ -44,6 +46,7 @@ async function cargarDatos() {
   }
 }
 
+// --- Llenar selects de filtros ---
 function llenarFiltros() {
   const marcas = [...new Set(zapatillas.map(z => z.marca).filter(Boolean))].sort();
   const tallas = [...new Set(zapatillas.map(z => z.talla).filter(Boolean))].sort((a, b) => Number(a) - Number(b));
@@ -53,43 +56,127 @@ function llenarFiltros() {
   tallas.forEach(t => selTalla.innerHTML += `<option value="${t}">Talla ${t}</option>`);
 }
 
+// --- Renderizar tarjetas ---
 function render() {
   const marca = document.getElementById("filtroMarca").value;
   const talla = document.getElementById("filtroTalla").value;
   const soloDisp = document.getElementById("soloDisponibles").checked;
+
   const lista = zapatillas.filter(z =>
     (!marca || z.marca === marca) &&
     (!talla || z.talla === talla) &&
     (!soloDisp || (z.disponible || "").toUpperCase() === "SI")
   );
+
   const cont = document.getElementById("catalogo");
+
   if (!lista.length) {
     cont.innerHTML = "<p style='padding:20px'>No hay zapatillas con esos filtros.</p>";
     return;
   }
-  cont.innerHTML = lista.map(z => {
+
+  cont.innerHTML = lista.map((z, idx) => {
     const agotado = (z.disponible || "").toUpperCase() !== "SI";
-    const msg = encodeURIComponent(`Hola! Quiero pedir el modelo ${z.modelo} (${z.marca}) en talla ${z.talla}. ¿Está disponible?`);
-    const linkWA = `https://wa.me/${MI_WHATSAPP}?text=${msg}`;
+    const fotoPrincipal = z.foto1 || z.foto2 || z.foto3 || "https://via.placeholder.com/300x300?text=Sin+foto";
+    const notas = z.notas || "";
+
     return `
-      <article class="card ${agotado ? "agotado" : ""}">
-        <img src="${z.foto}" alt="${z.modelo}" loading="lazy" onerror="this.src='https://via.placeholder.com/300x300?text=Sin+foto'" />
+      <article class="card ${agotado ? "agotado" : ""}" onclick="abrirModal(${idx})">
+        <img src="${fotoPrincipal}" alt="${z.modelo}" loading="lazy" onerror="this.src='https://via.placeholder.com/300x300?text=Sin+foto'" />
         <div class="info">
-          <span class="marca">${z.marca}</span>
-          <span class="modelo">${z.modelo}</span>
-          <span class="talla">Talla ${z.talla}</span>
-          ${z.notas ? `<span class="talla">${z.notas}</span>` : ""}
-          <span class="precio">${MONEDA} ${z.precio}</span>
+          <span class="marca">${z.marca || ""}</span>
+          <span class="modelo">${z.modelo || ""}</span>
+          <span class="talla">Talla ${z.talla || ""}</span>
+          ${notas ? `<span class="talla">${notas}</span>` : ""}
+          <span class="precio">${MONEDA} ${z.precio || ""}</span>
           ${agotado ? '<span class="badge">Agotado</span>' : ""}
-          <button class="btn-wa" ${agotado ? "disabled" : ""} onclick="window.open('${linkWA}', '_blank')">
-            ${agotado ? "Sin stock" : "Pedir por WhatsApp"}
-          </button>
         </div>
       </article>
     `;
   }).join("");
 }
 
+// --- Abrir modal con fotos grandes ---
+function abrirModal(idx) {
+  const z = zapatillasFiltradas()[idx];
+  if (!z) return;
+
+  const fotos = [z.foto1, z.foto2, z.foto3].filter(f => f && f.trim() !== "");
+
+  const modal = document.getElementById("modal");
+  const grande = document.getElementById("modalFotoGrande");
+  const miniaturas = document.getElementById("modalMiniaturas");
+
+  grande.src = fotos[0] || "https://via.placeholder.com/500x500?text=Sin+foto";
+  grande.onerror = function() { this.src = "https://via.placeholder.com/500x500?text=Sin+foto"; };
+
+  miniaturas.innerHTML = "";
+  if (fotos.length > 1) {
+    fotos.forEach((f, i) => {
+      const img = document.createElement("img");
+      img.src = f;
+      img.alt = `Foto ${i + 1}`;
+      if (i === 0) img.classList.add("activa");
+      img.onclick = () => {
+        grande.src = f;
+        grande.onerror = function() { this.src = "https://via.placeholder.com/500x500?text=Sin+foto"; };
+        miniaturas.querySelectorAll("img").forEach(m => m.classList.remove("activa"));
+        img.classList.add("activa");
+      };
+      miniaturas.appendChild(img);
+    });
+  }
+
+  document.getElementById("modalModelo").textContent = z.modelo || "";
+  document.getElementById("modalMarca").textContent = z.marca || "";
+  document.getElementById("modalTalla").textContent = "Talla " + (z.talla || "");
+  document.getElementById("modalPrecio").textContent = MONEDA + " " + (z.precio || "");
+  document.getElementById("modalNotas").textContent = z.notas || "";
+
+  const agotado = (z.disponible || "").toUpperCase() !== "SI";
+  const btn = document.getElementById("modalBtnWA");
+  if (agotado) {
+    btn.disabled = true;
+    btn.textContent = "Sin stock";
+  } else {
+    btn.disabled = false;
+    btn.textContent = "Pedir por WhatsApp";
+    const msg = encodeURIComponent(`Hola! Quiero pedir el modelo ${z.modelo} (${z.marca}) en talla ${z.talla}. ¿Está disponible?`);
+    btn.onclick = () => window.open(`https://wa.me/${MI_WHATSAPP}?text=${msg}`, "_blank");
+  }
+
+  modal.classList.remove("oculto");
+}
+
+// --- Cerrar modal ---
+function cerrarModal() {
+  document.getElementById("modal").classList.add("oculto");
+}
+
+// Cerrar al hacer clic fuera del contenido
+document.addEventListener("click", (e) => {
+  const modal = document.getElementById("modal");
+  if (e.target === modal) cerrarModal();
+});
+
+// Cerrar con tecla Escape
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") cerrarModal();
+});
+
+// --- Lista filtrada actual (para que el modal sepa qué mostrar) ---
+function zapatillasFiltradas() {
+  const marca = document.getElementById("filtroMarca").value;
+  const talla = document.getElementById("filtroTalla").value;
+  const soloDisp = document.getElementById("soloDisponibles").checked;
+  return zapatillas.filter(z =>
+    (!marca || z.marca === marca) &&
+    (!talla || z.talla === talla) &&
+    (!soloDisp || (z.disponible || "").toUpperCase() === "SI")
+  );
+}
+
+// --- Eventos ---
 ["filtroMarca", "filtroTalla", "soloDisponibles"].forEach(id => {
   document.getElementById(id).addEventListener("input", render);
 });

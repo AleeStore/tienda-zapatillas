@@ -33,6 +33,25 @@
     <p>© 2025 Sneaker Store — Hecho con ❤️</p>
   </footer>
 
+  <!-- Modal para ver fotos grandes -->
+  <div id="modal" class="modal oculto">
+    <div class="modal-contenido">
+      <button class="cerrar" onclick="cerrarModal()">✕</button>
+      <div class="modal-imagen-principal">
+        <img id="modalFotoGrande" src="" alt="" />
+      </div>
+      <div id="modalMiniaturas" class="miniaturas"></div>
+      <div class="modal-info">
+        <h2 id="modalModelo"></h2>
+        <p id="modalMarca"></p>
+        <p id="modalTalla"></p>
+        <p id="modalPrecio"></p>
+        <p id="modalNotas"></p>
+        <button class="btn-wa" id="modalBtnWA">Pedir por WhatsApp</button>
+      </div>
+    </div>
+  </div>
+
   <script src="app.js"></script>
 </body>
 </html>
