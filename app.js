@@ -3,9 +3,8 @@ const MONEDA = "S/";
 const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTZlB-la3t1Kc1HYZYqqQ7m4f2yxyrcvOhOEBiMoX9I7J6PpwDlneTgIcP9-aHiiOoK6417JE_cweJO/pub?gid=0&single=true&output=csv";
 
 let zapatillas = [];
-let listaActual = []; // Guarda lo que se está mostrando para el modal
+let listaActual = [];
 
-// --- Parsear CSV ---
 function parseCSV(texto) {
   const filas = [];
   let fila = [], campo = "", enComillas = false;
@@ -31,7 +30,6 @@ function parseCSV(texto) {
   });
 }
 
-// --- Cargar datos ---
 async function cargarDatos() {
   const cont = document.getElementById("catalogo");
   try {
@@ -47,7 +45,7 @@ async function cargarDatos() {
   }
 }
 
-// --- Llenar selects de filtros ---
+// Solo llenamos Marca y Talla (Género ya está fijo en el HTML)
 function llenarFiltros() {
   const marcas = [...new Set(zapatillas.map(z => z.marca).filter(Boolean))].sort();
   const tallas = [...new Set(zapatillas.map(z => z.talla).filter(Boolean))].sort((a, b) => Number(a) - Number(b));
@@ -59,26 +57,26 @@ function llenarFiltros() {
   tallas.forEach(t => selTalla.innerHTML += `<option value="${t}">Talla ${t}</option>`);
 }
 
-// --- Filtrar la lista ---
 function obtenerFiltrados() {
   const texto = document.getElementById("buscador").value.toLowerCase();
   const marca = document.getElementById("filtroMarca").value;
+  const genero = document.getElementById("filtroGenero").value;
   const talla = document.getElementById("filtroTalla").value;
   const rangoPrecio = document.getElementById("filtroPrecio").value;
   const soloDisp = document.getElementById("soloDisponibles").checked;
   const soloNuevos = document.getElementById("soloNuevos").checked;
 
   return zapatillas.filter(z => {
-    // 1. Buscador de texto
+    // Buscador
     const coincideTexto = !texto || 
       (z.modelo || "").toLowerCase().includes(texto) || 
       (z.marca || "").toLowerCase().includes(texto);
     
-    // 2. Marca y Talla
+    // Filtros
     const coincideMarca = !marca || z.marca === marca;
+    const coincideGenero = !genero || (z.genero || "").toLowerCase() === genero.toLowerCase();
     const coincideTalla = !talla || z.talla === talla;
     
-    // 3. Precio
     let coincidePrecio = true;
     if (rangoPrecio) {
       const [min, max] = rangoPrecio.split("-").map(Number);
@@ -86,15 +84,13 @@ function obtenerFiltrados() {
       coincidePrecio = p >= min && p <= max;
     }
 
-    // 4. Disponibilidad y Nuevos
     const coincideDisp = !soloDisp || (z.disponible || "").toUpperCase() === "SI";
     const coincideNuevo = !soloNuevos || (z.nuevo || "").toUpperCase() === "SI";
 
-    return coincideTexto && coincideMarca && coincideTalla && coincidePrecio && coincideDisp && coincideNuevo;
+    return coincideTexto && coincideMarca && coincideGenero && coincideTalla && coincidePrecio && coincideDisp && coincideNuevo;
   });
 }
 
-// --- Renderizar tarjetas ---
 function render() {
   listaActual = obtenerFiltrados();
   const cont = document.getElementById("catalogo");
@@ -109,14 +105,18 @@ function render() {
     const esNuevo = (z.nuevo || "").toUpperCase() === "SI";
     const fotoPrincipal = z.foto1 || z.foto2 || z.foto3 || "https://via.placeholder.com/300x300?text=Sin+foto";
     
+    // Protección por si el modelo está vacío en el Excel
+    const nombreModelo = z.modelo ? z.modelo : "Modelo sin nombre"; 
+    
     return `
       <article class="card ${agotado ? "agotado" : ""}" onclick="abrirModal(${idx})">
         ${esNuevo ? '<span class="badge-nuevo">✨ Nuevo</span>' : ''}
-        <img src="${fotoPrincipal}" alt="${z.modelo}" loading="lazy" onerror="this.src='https://via.placeholder.com/300x300?text=Sin+foto'" />
+        <img src="${fotoPrincipal}" alt="${nombreModelo}" loading="lazy" onerror="this.src='https://via.placeholder.com/300x300?text=Sin+foto'" />
         <div class="info">
           <span class="marca">${z.marca || ""}</span>
-          <span class="modelo">${z.modelo || ""}</span>
+          <span class="modelo">${nombreModelo}</span>
           <span class="talla">Talla ${z.talla || ""}</span>
+          ${z.genero ? `<span class="talla">${z.genero}</span>` : ""}
           ${z.notas ? `<span class="talla">${z.notas}</span>` : ""}
           <span class="precio">${MONEDA} ${z.precio || ""}</span>
           ${agotado ? '<span class="badge-agotado">Agotado</span>' : ""}
@@ -126,7 +126,6 @@ function render() {
   }).join("");
 }
 
-// --- Abrir modal con fotos grandes ---
 function abrirModal(idx) {
   const z = listaActual[idx];
   if (!z) return;
@@ -155,8 +154,11 @@ function abrirModal(idx) {
     });
   }
 
-  document.getElementById("modalModelo").textContent = z.modelo || "";
+  const nombreModelo = z.modelo ? z.modelo : "Modelo sin nombre";
+
+  document.getElementById("modalModelo").textContent = nombreModelo;
   document.getElementById("modalMarca").textContent = z.marca || "";
+  document.getElementById("modalGenero").textContent = z.genero ? "Para: " + z.genero : "";
   document.getElementById("modalTalla").textContent = "Talla " + (z.talla || "");
   document.getElementById("modalPrecio").textContent = MONEDA + " " + (z.precio || "");
   document.getElementById("modalNotas").textContent = z.notas || "";
@@ -170,29 +172,20 @@ function abrirModal(idx) {
   } else {
     btn.disabled = false;
     btn.textContent = "Pedir por WhatsApp";
-    const msg = encodeURIComponent(`Hola! Quiero pedir el modelo ${z.modelo} (${z.marca}) en talla ${z.talla}. ¿Está disponible?`);
+    const msg = encodeURIComponent(`Hola! Quiero pedir el modelo ${nombreModelo} (${z.marca}) en talla ${z.talla}. ¿Está disponible?`);
     btn.onclick = () => window.open(`https://wa.me/${MI_WHATSAPP}?text=${msg}`, "_blank");
   }
 
-  // Lógica del botón Compartir
   const btnCompartir = document.getElementById("modalBtnCompartir");
   btnCompartir.onclick = async () => {
-    const textoCompartir = `¡Mira estas ${z.modelo} de ALE STORE! Talla ${z.talla} a solo ${MONEDA} ${z.precio}. Pídelas aquí: `;
+    const textoCompartir = `¡Mira estas ${nombreModelo} de ALE STORE! Talla ${z.talla} a solo ${MONEDA} ${z.precio}. Pídelas aquí: `;
     const urlActual = window.location.href;
 
     if (navigator.share) {
-      // Abre el menú nativo del celular (WhatsApp, Instagram, etc.)
       try {
-        await navigator.share({
-          title: z.modelo,
-          text: textoCompartir,
-          url: urlActual,
-        });
-      } catch (err) {
-        console.log("Compartir cancelado", err);
-      }
+        await navigator.share({ title: nombreModelo, text: textoCompartir, url: urlActual });
+      } catch (err) { console.log("Compartir cancelado", err); }
     } else {
-      // Si el navegador no soporta (ej. compu), copia al portapapeles
       navigator.clipboard.writeText(textoCompartir + urlActual);
       alert("¡Enlace copiado! Pégalo en tus redes sociales.");
     }
@@ -201,7 +194,6 @@ function abrirModal(idx) {
   modal.classList.remove("oculto");
 }
 
-// --- Cerrar modal ---
 function cerrarModal() {
   document.getElementById("modal").classList.add("oculto");
 }
@@ -215,8 +207,7 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") cerrarModal();
 });
 
-// --- Eventos de filtros ---
-["buscador", "filtroMarca", "filtroTalla", "filtroPrecio", "soloDisponibles", "soloNuevos"].forEach(id => {
+["buscador", "filtroMarca", "filtroGenero", "filtroTalla", "filtroPrecio", "soloDisponibles", "soloNuevos"].forEach(id => {
   document.getElementById(id).addEventListener("input", render);
 });
 

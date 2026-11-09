@@ -21,7 +21,6 @@ header {
 }
 header p { font-size: 0.9rem; opacity: 0.8; margin-top: 4px; color: #d4af37; font-weight: 600; letter-spacing: 1px;}
 
-/* Barra de herramientas (Buscador + Filtros) */
 .barra-herramientas {
   background: #fff;
   padding: 16px;
@@ -67,7 +66,6 @@ header p { font-size: 0.9rem; opacity: 0.8; margin-top: 4px; color: #d4af37; fon
 .check { display: flex; align-items: center; gap: 6px; cursor: pointer; }
 .check.destacado { color: #d4af37; font-weight: 600; }
 
-/* Grid de productos */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -97,7 +95,6 @@ header p { font-size: 0.9rem; opacity: 0.8; margin-top: 4px; color: #d4af37; fon
   background: #eee;
 }
 
-/* Etiqueta de Nuevo Ingreso en la tarjeta */
 .badge-nuevo {
   position: absolute;
   top: 10px;
@@ -157,7 +154,6 @@ footer {
 .redes a { color: #d4af37; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: color 0.15s; }
 .redes a:hover { color: #fff; }
 
-/* ===== MODAL ===== */
 .modal {
   position: fixed;
   inset: 0;
@@ -217,7 +213,6 @@ footer {
 .modal-info h2 { font-size: 1.3rem; margin-bottom: 4px; }
 .modal-info p { color: #555; margin-bottom: 4px; font-size: 0.95rem; }
 
-/* Acciones del modal (WhatsApp + Compartir) */
 .acciones-modal {
   display: flex;
   gap: 10px;
