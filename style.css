@@ -13,8 +13,16 @@ header {
   color: #fff;
 }
 
-header h1 { font-size: 1.8rem; }
-header p { font-size: 0.9rem; opacity: 0.8; margin-top: 4px; }
+/* Estilo para tu logo */
+.logo {
+  max-width: 220px;
+  width: 100%;
+  height: auto;
+  margin-bottom: 12px;
+  /* Si tu logo tiene fondo blanco, esto lo hace transparente visualmente */
+  mix-blend-mode: screen; 
+}
+header p { font-size: 0.9rem; opacity: 0.8; margin-top: 4px; color: #d4af37; font-weight: 600; letter-spacing: 1px;}
 
 .filtros {
   display: flex;
@@ -55,9 +63,10 @@ header p { font-size: 0.9rem; opacity: 0.8; margin-top: 4px; }
   flex-direction: column;
   transition: transform 0.15s;
   cursor: pointer;
+  border: 1px solid #eee;
 }
 
-.card:hover { transform: translateY(-3px); }
+.card:hover { transform: translateY(-3px); border-color: #d4af37; }
 
 .card img {
   width: 100%;
@@ -100,7 +109,32 @@ header p { font-size: 0.9rem; opacity: 0.8; margin-top: 4px; }
 .btn-wa:hover { background: #1ebe5b; }
 .btn-wa:disabled { background: #ccc; cursor: not-allowed; }
 
-footer { text-align: center; padding: 24px; font-size: 0.8rem; color: #888; }
+footer { 
+  text-align: center; 
+  padding: 24px; 
+  font-size: 0.8rem; 
+  color: #888; 
+  background: #111;
+}
+
+.redes {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.redes a {
+  color: #d4af37;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: color 0.15s;
+}
+
+.redes a:hover {
+  color: #fff;
+}
 
 /* ===== MODAL ===== */
 .modal {
@@ -169,7 +203,7 @@ footer { text-align: center; padding: 24px; font-size: 0.8rem; color: #888; }
 }
 
 .miniaturas img:hover,
-.miniaturas img.activa { border-color: #25D366; }
+.miniaturas img.activa { border-color: #d4af37; }
 
 .modal-info { margin-top: 16px; text-align: center; }
 .modal-info h2 { font-size: 1.3rem; margin-bottom: 4px; }
