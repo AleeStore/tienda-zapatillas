@@ -3,6 +3,7 @@ const MONEDA = "S/";
 const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTZlB-la3t1Kc1HYZYqqQ7m4f2yxyrcvOhOEBiMoX9I7J6PpwDlneTgIcP9-aHiiOoK6417JE_cweJO/pub?gid=0&single=true&output=csv";
 
 let zapatillas = [];
+let listaActual = []; // Guarda lo que se está mostrando para el modal
 
 // --- Parsear CSV ---
 function parseCSV(texto) {
@@ -50,46 +51,75 @@ async function cargarDatos() {
 function llenarFiltros() {
   const marcas = [...new Set(zapatillas.map(z => z.marca).filter(Boolean))].sort();
   const tallas = [...new Set(zapatillas.map(z => z.talla).filter(Boolean))].sort((a, b) => Number(a) - Number(b));
+  
   const selMarca = document.getElementById("filtroMarca");
   const selTalla = document.getElementById("filtroTalla");
+  
   marcas.forEach(m => selMarca.innerHTML += `<option value="${m}">${m}</option>`);
   tallas.forEach(t => selTalla.innerHTML += `<option value="${t}">Talla ${t}</option>`);
 }
 
-// --- Renderizar tarjetas ---
-function render() {
+// --- Filtrar la lista ---
+function obtenerFiltrados() {
+  const texto = document.getElementById("buscador").value.toLowerCase();
   const marca = document.getElementById("filtroMarca").value;
   const talla = document.getElementById("filtroTalla").value;
+  const rangoPrecio = document.getElementById("filtroPrecio").value;
   const soloDisp = document.getElementById("soloDisponibles").checked;
+  const soloNuevos = document.getElementById("soloNuevos").checked;
 
-  const lista = zapatillas.filter(z =>
-    (!marca || z.marca === marca) &&
-    (!talla || z.talla === talla) &&
-    (!soloDisp || (z.disponible || "").toUpperCase() === "SI")
-  );
+  return zapatillas.filter(z => {
+    // 1. Buscador de texto
+    const coincideTexto = !texto || 
+      (z.modelo || "").toLowerCase().includes(texto) || 
+      (z.marca || "").toLowerCase().includes(texto);
+    
+    // 2. Marca y Talla
+    const coincideMarca = !marca || z.marca === marca;
+    const coincideTalla = !talla || z.talla === talla;
+    
+    // 3. Precio
+    let coincidePrecio = true;
+    if (rangoPrecio) {
+      const [min, max] = rangoPrecio.split("-").map(Number);
+      const p = Number(z.precio);
+      coincidePrecio = p >= min && p <= max;
+    }
 
+    // 4. Disponibilidad y Nuevos
+    const coincideDisp = !soloDisp || (z.disponible || "").toUpperCase() === "SI";
+    const coincideNuevo = !soloNuevos || (z.nuevo || "").toUpperCase() === "SI";
+
+    return coincideTexto && coincideMarca && coincideTalla && coincidePrecio && coincideDisp && coincideNuevo;
+  });
+}
+
+// --- Renderizar tarjetas ---
+function render() {
+  listaActual = obtenerFiltrados();
   const cont = document.getElementById("catalogo");
 
-  if (!lista.length) {
-    cont.innerHTML = "<p style='padding:20px'>No hay zapatillas con esos filtros.</p>";
+  if (!listaActual.length) {
+    cont.innerHTML = "<p style='padding:20px'>No hay zapatillas que coincidan con tu búsqueda.</p>";
     return;
   }
 
-  cont.innerHTML = lista.map((z, idx) => {
+  cont.innerHTML = listaActual.map((z, idx) => {
     const agotado = (z.disponible || "").toUpperCase() !== "SI";
+    const esNuevo = (z.nuevo || "").toUpperCase() === "SI";
     const fotoPrincipal = z.foto1 || z.foto2 || z.foto3 || "https://via.placeholder.com/300x300?text=Sin+foto";
-    const notas = z.notas || "";
-
+    
     return `
       <article class="card ${agotado ? "agotado" : ""}" onclick="abrirModal(${idx})">
+        ${esNuevo ? '<span class="badge-nuevo">✨ Nuevo</span>' : ''}
         <img src="${fotoPrincipal}" alt="${z.modelo}" loading="lazy" onerror="this.src='https://via.placeholder.com/300x300?text=Sin+foto'" />
         <div class="info">
           <span class="marca">${z.marca || ""}</span>
           <span class="modelo">${z.modelo || ""}</span>
           <span class="talla">Talla ${z.talla || ""}</span>
-          ${notas ? `<span class="talla">${notas}</span>` : ""}
+          ${z.notas ? `<span class="talla">${z.notas}</span>` : ""}
           <span class="precio">${MONEDA} ${z.precio || ""}</span>
-          ${agotado ? '<span class="badge">Agotado</span>' : ""}
+          ${agotado ? '<span class="badge-agotado">Agotado</span>' : ""}
         </div>
       </article>
     `;
@@ -98,11 +128,10 @@ function render() {
 
 // --- Abrir modal con fotos grandes ---
 function abrirModal(idx) {
-  const z = zapatillasFiltradas()[idx];
+  const z = listaActual[idx];
   if (!z) return;
 
   const fotos = [z.foto1, z.foto2, z.foto3].filter(f => f && f.trim() !== "");
-
   const modal = document.getElementById("modal");
   const grande = document.getElementById("modalFotoGrande");
   const miniaturas = document.getElementById("modalMiniaturas");
@@ -119,7 +148,6 @@ function abrirModal(idx) {
       if (i === 0) img.classList.add("activa");
       img.onclick = () => {
         grande.src = f;
-        grande.onerror = function() { this.src = "https://via.placeholder.com/500x500?text=Sin+foto"; };
         miniaturas.querySelectorAll("img").forEach(m => m.classList.remove("activa"));
         img.classList.add("activa");
       };
@@ -135,6 +163,7 @@ function abrirModal(idx) {
 
   const agotado = (z.disponible || "").toUpperCase() !== "SI";
   const btn = document.getElementById("modalBtnWA");
+  
   if (agotado) {
     btn.disabled = true;
     btn.textContent = "Sin stock";
@@ -145,6 +174,30 @@ function abrirModal(idx) {
     btn.onclick = () => window.open(`https://wa.me/${MI_WHATSAPP}?text=${msg}`, "_blank");
   }
 
+  // Lógica del botón Compartir
+  const btnCompartir = document.getElementById("modalBtnCompartir");
+  btnCompartir.onclick = async () => {
+    const textoCompartir = `¡Mira estas ${z.modelo} de ALE STORE! Talla ${z.talla} a solo ${MONEDA} ${z.precio}. Pídelas aquí: `;
+    const urlActual = window.location.href;
+
+    if (navigator.share) {
+      // Abre el menú nativo del celular (WhatsApp, Instagram, etc.)
+      try {
+        await navigator.share({
+          title: z.modelo,
+          text: textoCompartir,
+          url: urlActual,
+        });
+      } catch (err) {
+        console.log("Compartir cancelado", err);
+      }
+    } else {
+      // Si el navegador no soporta (ej. compu), copia al portapapeles
+      navigator.clipboard.writeText(textoCompartir + urlActual);
+      alert("¡Enlace copiado! Pégalo en tus redes sociales.");
+    }
+  };
+
   modal.classList.remove("oculto");
 }
 
@@ -153,31 +206,17 @@ function cerrarModal() {
   document.getElementById("modal").classList.add("oculto");
 }
 
-// Cerrar al hacer clic fuera del contenido
 document.addEventListener("click", (e) => {
   const modal = document.getElementById("modal");
   if (e.target === modal) cerrarModal();
 });
 
-// Cerrar con tecla Escape
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") cerrarModal();
 });
 
-// --- Lista filtrada actual (para que el modal sepa qué mostrar) ---
-function zapatillasFiltradas() {
-  const marca = document.getElementById("filtroMarca").value;
-  const talla = document.getElementById("filtroTalla").value;
-  const soloDisp = document.getElementById("soloDisponibles").checked;
-  return zapatillas.filter(z =>
-    (!marca || z.marca === marca) &&
-    (!talla || z.talla === talla) &&
-    (!soloDisp || (z.disponible || "").toUpperCase() === "SI")
-  );
-}
-
-// --- Eventos ---
-["filtroMarca", "filtroTalla", "soloDisponibles"].forEach(id => {
+// --- Eventos de filtros ---
+["buscador", "filtroMarca", "filtroTalla", "filtroPrecio", "soloDisponibles", "soloNuevos"].forEach(id => {
   document.getElementById(id).addEventListener("input", render);
 });
 

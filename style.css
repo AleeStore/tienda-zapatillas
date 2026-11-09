@@ -13,28 +13,46 @@ header {
   color: #fff;
 }
 
-/* Estilo para tu logo */
 .logo {
   max-width: 220px;
   width: 100%;
   height: auto;
   margin-bottom: 12px;
-  /* Si tu logo tiene fondo blanco, esto lo hace transparente visualmente */
-  mix-blend-mode: screen; 
 }
 header p { font-size: 0.9rem; opacity: 0.8; margin-top: 4px; color: #d4af37; font-weight: 600; letter-spacing: 1px;}
 
-.filtros {
-  display: flex;
-  gap: 12px;
-  padding: 16px;
-  flex-wrap: wrap;
-  justify-content: center;
+/* Barra de herramientas (Buscador + Filtros) */
+.barra-herramientas {
   background: #fff;
+  padding: 16px;
   position: sticky;
   top: 0;
   z-index: 10;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#buscador {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.15s;
+}
+#buscador:focus { border-color: #d4af37; }
+
+.filtros {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
 }
 
 .filtros select, .filtros .check {
@@ -43,10 +61,13 @@ header p { font-size: 0.9rem; opacity: 0.8; margin-top: 4px; color: #d4af37; fon
   border: 1px solid #ddd;
   font-size: 0.95rem;
   background: #fff;
+  cursor: pointer;
 }
 
 .check { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.check.destacado { color: #d4af37; font-weight: 600; }
 
+/* Grid de productos */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -64,6 +85,7 @@ header p { font-size: 0.9rem; opacity: 0.8; margin-top: 4px; color: #d4af37; fon
   transition: transform 0.15s;
   cursor: pointer;
   border: 1px solid #eee;
+  position: relative;
 }
 
 .card:hover { transform: translateY(-3px); border-color: #d4af37; }
@@ -75,15 +97,30 @@ header p { font-size: 0.9rem; opacity: 0.8; margin-top: 4px; color: #d4af37; fon
   background: #eee;
 }
 
-.card .info { padding: 12px; display: flex; flex-direction: column; gap: 4px; }
+/* Etiqueta de Nuevo Ingreso en la tarjeta */
+.badge-nuevo {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #d4af37;
+  color: #111;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
 
+.card .info { padding: 12px; display: flex; flex-direction: column; gap: 4px; }
 .card .marca { font-size: 0.75rem; text-transform: uppercase; color: #888; letter-spacing: 1px; }
 .card .modelo { font-weight: 600; font-size: 1rem; }
 .card .talla { font-size: 0.85rem; color: #555; }
 .card .precio { font-weight: 700; color: #111; margin-top: 4px; }
-
 .card.agotado { opacity: 0.55; }
-.card .badge {
+
+.card .badge-agotado {
   display: inline-block;
   font-size: 0.7rem;
   padding: 2px 8px;
@@ -104,8 +141,8 @@ header p { font-size: 0.9rem; opacity: 0.8; margin-top: 4px; color: #d4af37; fon
   cursor: pointer;
   font-size: 0.9rem;
   transition: background 0.15s;
+  width: 100%;
 }
-
 .btn-wa:hover { background: #1ebe5b; }
 .btn-wa:disabled { background: #ccc; cursor: not-allowed; }
 
@@ -116,25 +153,9 @@ footer {
   color: #888; 
   background: #111;
 }
-
-.redes {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin-bottom: 12px;
-}
-
-.redes a {
-  color: #d4af37;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: color 0.15s;
-}
-
-.redes a:hover {
-  color: #fff;
-}
+.redes { display: flex; justify-content: center; gap: 16px; margin-bottom: 12px; }
+.redes a { color: #d4af37; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: color 0.15s; }
+.redes a:hover { color: #fff; }
 
 /* ===== MODAL ===== */
 .modal {
@@ -148,7 +169,6 @@ footer {
   padding: 16px;
   overflow-y: auto;
 }
-
 .modal.oculto { display: none; }
 
 .modal-contenido {
@@ -185,27 +205,36 @@ footer {
   background: #eee;
 }
 
-.miniaturas {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-  justify-content: center;
-}
-
+.miniaturas { display: flex; gap: 8px; margin-top: 12px; justify-content: center; }
 .miniaturas img {
-  width: 64px;
-  height: 64px;
-  object-fit: cover;
-  border-radius: 8px;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: border 0.15s;
+  width: 64px; height: 64px; object-fit: cover;
+  border-radius: 8px; cursor: pointer;
+  border: 2px solid transparent; transition: border 0.15s;
 }
-
-.miniaturas img:hover,
-.miniaturas img.activa { border-color: #d4af37; }
+.miniaturas img:hover, .miniaturas img.activa { border-color: #d4af37; }
 
 .modal-info { margin-top: 16px; text-align: center; }
 .modal-info h2 { font-size: 1.3rem; margin-bottom: 4px; }
 .modal-info p { color: #555; margin-bottom: 4px; font-size: 0.95rem; }
-.modal-info .btn-wa { width: 100%; margin-top: 12px; }
+
+/* Acciones del modal (WhatsApp + Compartir) */
+.acciones-modal {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+.acciones-modal .btn-wa { margin-top: 0; flex: 2; }
+
+.btn-compartir {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #111;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.15s;
+}
+.btn-compartir:hover { background: #333; }

@@ -8,22 +8,38 @@
 </head>
 <body>
   <header>
-    <!-- Tu logo aquí -->
     <img src="logo.png" alt="ALE STORE Logo" class="logo" />
     <p>Encuentra tu par y pide por WhatsApp</p>
   </header>
 
-  <section class="filtros">
-    <select id="filtroMarca">
-      <option value="">Todas las marcas</option>
-    </select>
-    <select id="filtroTalla">
-      <option value="">Todas las tallas</option>
-    </select>
-    <label class="check">
-      <input type="checkbox" id="soloDisponibles" checked />
-      Solo disponibles
-    </label>
+  <!-- Barra de búsqueda y filtros -->
+  <section class="barra-herramientas">
+    <input type="text" id="buscador" placeholder="🔍 Buscar modelo o marca..." />
+    
+    <div class="filtros">
+      <select id="filtroMarca">
+        <option value="">Todas las marcas</option>
+      </select>
+      <select id="filtroTalla">
+        <option value="">Todas las tallas</option>
+      </select>
+      <select id="filtroPrecio">
+        <option value="">Cualquier precio</option>
+        <option value="0-100">Hasta S/ 100</option>
+        <option value="100-150">S/ 100 - S/ 150</option>
+        <option value="150-200">S/ 150 - S/ 200</option>
+        <option value="200-9999">Más de S/ 200</option>
+      </select>
+      
+      <label class="check">
+        <input type="checkbox" id="soloDisponibles" checked />
+        Solo disponibles
+      </label>
+      <label class="check destacado">
+        <input type="checkbox" id="soloNuevos" />
+        ✨ Nuevos ingresos
+      </label>
+    </div>
   </section>
 
   <main id="catalogo" class="grid">
@@ -53,7 +69,11 @@
         <p id="modalTalla"></p>
         <p id="modalPrecio"></p>
         <p id="modalNotas"></p>
-        <button class="btn-wa" id="modalBtnWA">Pedir por WhatsApp</button>
+        
+        <div class="acciones-modal">
+          <button class="btn-wa" id="modalBtnWA">Pedir por WhatsApp</button>
+          <button class="btn-compartir" id="modalBtnCompartir">📤 Compartir</button>
+        </div>
       </div>
     </div>
   </div>
