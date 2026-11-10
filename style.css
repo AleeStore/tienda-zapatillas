@@ -141,14 +141,13 @@ body {
 /* ===== GRID DE PRODUCTOS ===== */
 .grid {
   display: grid;
-  /* Tamaño ideal de tarjetas para computadora */
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
-  gap: 16px;
-  padding: 24px 16px;
-  max-width: 1200px;
+  /* Aumentamos el mínimo a 230px. Esto fuerza a que en la PC entren máximo 4 columnas */
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); 
+  gap: 24px; /* Un poco más de espacio entre tarjetas */
+  padding: 30px 20px;
+  max-width: 1100px; /* Limitamos el ancho total de la página */
   margin: 0 auto;
 }
-
 .card {
   background: #fff;
   border-radius: 16px;
@@ -336,4 +335,5 @@ footer {
   }
   
   .acciones-modal { flex-direction: column; }
+
 }
