@@ -357,12 +357,41 @@ footer {
   .modal-info p {
     display: none; /* Oculta modelo, marca, talla, precio y notas */
   }
+    /* --- AJUSTES PARA EL MODAL EN CELULAR --- */
+  .modal {
+    padding: 0; /* Quitamos el margen de la pantalla */
+  }
   
   .modal-contenido {
-    padding: 16px; /* Más espacio para la foto */
+    padding: 12px;
+    border-radius: 0; /* Hace que ocupe toda la pantalla de lado a lado */
+    max-height: 100vh;
+    height: 100vh; /* Altura completa del celular */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centra la imagen verticalmente */
+  }
+
+  .modal-imagen-principal {
+    flex: 1; /* Hace que la imagen se expanda todo lo que pueda */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-imagen-principal img {
+    max-height: 60vh; /* La imagen puede crecer hasta el 60% de la pantalla */
+    width: 100%;
+    object-fit: contain; /* Muestra la foto completa sin recortarla */
+    aspect-ratio: auto; /* Quitamos el cuadrado forzado */
+  }
+  
+  .modal-info h2,
+  .modal-info p {
+    display: none; /* Seguimos ocultando los textos */
   }
   
   .acciones-modal {
     margin-top: 12px;
+    flex-direction: column;
   }
-}
