@@ -344,7 +344,6 @@ footer {
   .titulo-seccion { font-size: 1.4rem; }
   .barra-herramientas { top: 60px; padding: 20px 12px 12px 12px; }
   
-  /* Forzamos 2 columnas exactas en celular */
   .grid { 
     grid-template-columns: repeat(2, 1fr); 
     gap: 12px; 
@@ -353,4 +352,17 @@ footer {
   
   .acciones-modal { flex-direction: column; }
 
+  /* --- NUEVOS AJUSTES PARA EL MODAL EN CELULAR --- */
+  .modal-info h2,
+  .modal-info p {
+    display: none; /* Oculta modelo, marca, talla, precio y notas */
+  }
+  
+  .modal-contenido {
+    padding: 16px; /* Más espacio para la foto */
+  }
+  
+  .acciones-modal {
+    margin-top: 12px;
+  }
 }
