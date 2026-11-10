@@ -22,7 +22,7 @@ body {
 }
 
 .logo-nav {
-  height: 40px; /* Ajusta el tamaño de tu logo aquí */
+  height: 40px; 
   width: auto;
 }
 
@@ -40,7 +40,6 @@ body {
 
 /* ===== BANNER PRINCIPAL (HERO) ===== */
 .hero {
-  /* Aquí puedes cambiar la foto de fondo: */
   background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1552346154-21d32810aba3?q=80&w=2070&auto=format&fit=crop');
   background-size: cover;
   background-position: center;
@@ -86,7 +85,7 @@ body {
   background: #fff;
   padding: 30px 16px 16px 16px;
   position: sticky;
-  top: 64px; /* Para que se pegue debajo del navbar */
+  top: 64px; 
   z-index: 10;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   display: flex;
@@ -141,9 +140,10 @@ body {
 /* ===== GRID DE PRODUCTOS ===== */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
-  padding: 30px 16px;
+  /* Tamaño ideal de tarjetas para computadora */
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+  gap: 16px;
+  padding: 24px 16px;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -186,11 +186,12 @@ body {
   z-index: 2;
 }
 
-.card .info { padding: 16px; display: flex; flex-direction: column; gap: 4px; }
-.card .marca { font-size: 0.75rem; text-transform: uppercase; color: #888; letter-spacing: 1px; }
-.card .modelo { font-weight: 700; font-size: 1.05rem; }
-.card .talla { font-size: 0.85rem; color: #555; }
-.card .precio { font-weight: 800; color: #111; margin-top: 8px; font-size: 1.1rem; }
+/* Textos de la tarjeta más compactos */
+.card .info { padding: 12px; display: flex; flex-direction: column; gap: 4px; }
+.card .marca { font-size: 0.7rem; text-transform: uppercase; color: #888; letter-spacing: 1px; }
+.card .modelo { font-weight: 700; font-size: 0.95rem; line-height: 1.2; }
+.card .talla { font-size: 0.8rem; color: #555; }
+.card .precio { font-weight: 800; color: #111; margin-top: 6px; font-size: 1rem; }
 .card.agotado { opacity: 0.6; }
 
 .card .badge-agotado {
@@ -325,6 +326,13 @@ footer {
   .hero-contenido p { font-size: 0.95rem; }
   .titulo-seccion { font-size: 1.4rem; }
   .barra-herramientas { top: 60px; padding: 20px 12px 12px 12px; }
-  .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; padding: 20px 12px; }
+  
+  /* Forzamos 2 columnas exactas en celular */
+  .grid { 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 12px; 
+    padding: 16px 12px; 
+  }
+  
   .acciones-modal { flex-direction: column; }
 }
