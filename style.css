@@ -358,40 +358,42 @@ footer {
     display: none; /* Oculta modelo, marca, talla, precio y notas */
   }
     /* --- AJUSTES PARA EL MODAL EN CELULAR --- */
+    /* --- AJUSTES PARA EL MODAL EN CELULAR --- */
   .modal {
-    padding: 0; /* Quitamos el margen de la pantalla */
+    padding: 16px; /* Devolvemos el margen para que se vea el fondo oscuro */
+    align-items: center;
   }
   
   .modal-contenido {
-    padding: 12px;
-    border-radius: 0; /* Hace que ocupe toda la pantalla de lado a lado */
-    max-height: 100vh;
-    height: 100vh; /* Altura completa del celular */
+    padding: 16px;
+    border-radius: 20px; /* Bordes redondeados bonitos */
+    height: auto; /* Dejamos que la tarjeta se adapte al contenido */
+    max-height: 90vh;
+    width: 95%; /* Un poco más ancha que antes */
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Centra la imagen verticalmente */
-  }
-
-  .modal-imagen-principal {
-    flex: 1; /* Hace que la imagen se expanda todo lo que pueda */
-    display: flex;
-    align-items: center;
     justify-content: center;
   }
 
-  .modal-imagen-principal img {
-    max-height: 60vh; /* La imagen puede crecer hasta el 60% de la pantalla */
+  .modal-imagen-principal {
     width: 100%;
-    object-fit: contain; /* Muestra la foto completa sin recortarla */
-    aspect-ratio: auto; /* Quitamos el cuadrado forzado */
+  }
+
+  .modal-imagen-principal img {
+    width: 100%;
+    height: 50vh; /* La foto ocupará la mitad de la pantalla del celular */
+    object-fit: contain; /* Muestra la zapatilla completa sin cortarla */
+    border-radius: 12px;
+    background: #f9f9f9; /* Un fondito gris claro para que resalte la zapatilla */
   }
   
+  /* Mantenemos los textos ocultos */
   .modal-info h2,
   .modal-info p {
-    display: none; /* Seguimos ocultando los textos */
+    display: none; 
   }
   
   .acciones-modal {
-    margin-top: 12px;
+    margin-top: 16px;
     flex-direction: column;
   }
