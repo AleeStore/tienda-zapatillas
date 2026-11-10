@@ -93,7 +93,7 @@ function obtenerFiltrados() {
 
 function render() {
   listaActual = obtenerFiltrados();
-  const cont = document.getElementById("catalogo");
+  const cont = document.getElementById("catalogo-grid");
 
   if (!listaActual.length) {
     cont.innerHTML = "<p style='padding:20px'>No hay zapatillas que coincidan con tu búsqueda.</p>";

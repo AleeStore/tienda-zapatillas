@@ -7,13 +7,25 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <img src="logo.png" alt="ALE STORE Logo" class="logo" />
-    <p>Encuentra tu par y pide por WhatsApp</p>
-  </header>
 
-  <!-- Barra de búsqueda y filtros -->
-  <section class="barra-herramientas">
+  <!-- BARRA DE NAVEGACIÓN -->
+  <nav class="navbar">
+    <img src="logo.png" alt="ALE STORE" class="logo-nav" />
+    <a href="https://wa.me/51970311300" target="_blank" class="btn-nav-wa">💬 WhatsApp</a>
+  </nav>
+
+  <!-- BANNER PRINCIPAL (HERO) -->
+  <section class="hero">
+    <div class="hero-contenido">
+      <h1>Encuentra tu par perfecto</h1>
+      <p>Las mejores marcas y los modelos más exclusivos en ALE STORE.</p>
+      <a href="#catalogo" class="btn-hero">Ver Catálogo 👟</a>
+    </div>
+  </section>
+
+  <!-- BARRA DE HERRAMIENTAS (BUSCADOR Y FILTROS) -->
+  <section class="barra-herramientas" id="catalogo">
+    <h2 class="titulo-seccion">Nuestro Catálogo</h2>
     <input type="text" id="buscador" placeholder="🔍 Buscar modelo o marca..." />
     
     <div class="filtros">
@@ -27,7 +39,6 @@
         <option value="Unisex">Unisex</option>
         <option value="Niño">Niño</option>
       </select>
-
       <select id="filtroTalla">
         <option value="">Todas las tallas</option>
       </select>
@@ -50,10 +61,12 @@
     </div>
   </section>
 
-  <main id="catalogo" class="grid">
+  <!-- CATÁLOGO DE PRODUCTOS -->
+  <main id="catalogo-grid" class="grid">
     <p style="padding:20px">Cargando catálogo...</p>
   </main>
 
+  <!-- PIE DE PÁGINA -->
   <footer>
     <div class="redes">
       <a href="https://www.tiktok.com/@ale.store7?_t=8ma1BT1YIwH&_r=" target="_blank" rel="noopener">TikTok</a>
@@ -63,7 +76,7 @@
     <p>© 2025 ALE STORE — Hecho con ❤️</p>
   </footer>
 
-  <!-- Modal para ver fotos grandes -->
+  <!-- MODAL (GALERÍA DE FOTOS) -->
   <div id="modal" class="modal oculto">
     <div class="modal-contenido">
       <button class="cerrar" onclick="cerrarModal()">✕</button>
