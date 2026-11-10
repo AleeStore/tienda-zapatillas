@@ -22,10 +22,11 @@ body {
 }
 
 .logo-nav {
-  height: 40px; 
+  height: 55px; /* Un poco más alto para que se lea bien */
   width: auto;
+  max-width: 280px; /* Evita que se salga de la pantalla en celulares */
+  object-fit: contain;
 }
-
 .btn-nav-wa {
   background: #25D366;
   color: #fff;
